@@ -3,8 +3,8 @@ from functools import reduce
 
 def solve1(input_array):
     counts = np.sum(input_array, axis=0)
-    gamma = ''.join(['1' if bit >= len(input_array)/2 else '0' for bit in counts])
-    epsilon = ''.join(['0' if bit >= len(input_array)/2 else '1' for bit in counts])
+    gamma = ''.join(['1' if count >= len(input_array)/2 else '0' for count in counts])
+    epsilon = ''.join(['0' if count >= len(input_array)/2 else '1' for count in counts])
     print(int(gamma, 2) * int(epsilon, 2))
 
 def filter_list(array, col, trueVal, falseVal):
