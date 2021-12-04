@@ -26,8 +26,7 @@ def solve1(bingoBoards, pulled_nums):
     winners = []
     for num in pulled_nums:
         for board in bingoBoards:
-            if board.new_number(num):
-                winners.append(board.get_winning_sum() * num)
+            if board.new_number(num): winners.append(board.get_winning_sum() * num)
         bingoBoards = list(filter(lambda board: board.is_loser(), bingoBoards))
     print(winners[0], winners[-1])
 
