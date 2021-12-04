@@ -12,18 +12,14 @@ class BingoBoard:
     
     def is_loser(self): return self.another
 
-    def check_board(self):
-        columns = np.sum(self.pulled, axis=0)
-        rows = np.sum(self.pulled, axis=1)
-        return columns, rows
-
     def get_winning_sum(self):
         self.another = False
         return np.sum(self.board[np.where(self.pulled == 0)])
 
     def new_number(self, value):
         if value in self.locations: self.pulled[self.locations[value]] = 1
-        columns, rows = self.check_board()
+        columns = np.sum(self.pulled, axis=0)
+        rows = np.sum(self.pulled, axis=1)
         return 5 in columns or 5 in rows
 
 def solve1(bingoBoards, pulled_nums):
