@@ -1,36 +1,30 @@
 import numpy as np
+from functools import reduce
 
-class BingoBoard:
-    def __init__(self, board):
-        self.board = np.array([[int(i) for i in line.split()] for line in board.strip().split('\n')])
-        self.pulled = np.zeros((5,5))
-        self.locations = dict()
-        for i in range(len(self.board)):
-            for j in range(len(self.board[0])):
-                self.locations |= {self.board[i][j]: (i, j)}
-        self.another = True
-    
-    def is_loser(self): return self.another
+def solve1(input_array):
+    counts = np.sum(input_array, axis=0)
+    gamma = ''.join(['1' if count >= len(input_array)/2 else '0' for count in counts])
+    epsilon = ''.join(['0' if count >= len(input_array)/2 else '1' for count in counts])
+    print(int(gamma, 2) * int(epsilon, 2))
 
-    def get_winning_sum(self):
-        self.another = False
-        return np.sum(self.board[np.where(self.pulled == 0)])
+def filter_list(array, col, trueVal, falseVal):
+    column = array[:, col]
+    bit = trueVal if sum(column) >= len(column)/2 else falseVal
+    return list(filter(lambda row: row[col] == bit, array))
 
-    def new_number(self, value):
-        if value in self.locations: self.pulled[self.locations[value]] = 1
-        columns = np.sum(self.pulled, axis=0)
-        rows = np.sum(self.pulled, axis=1)
-        return 5 in columns or 5 in rows
+def solve2(input_array):
+    o2gen = reduce(
+        lambda array, col: array if len(array) == 1 else filter_list(np.array(array), col, 1, 0),
+        range(0, 12),
+        input_array
+    )[0]
+    co2scrub = reduce(
+        lambda array, col: array if len(array) == 1 else filter_list(np.array(array), col, 0, 1),
+        range(0, 12),
+        input_array
+    )[0]
+    print(int(''.join([str(i) for i in o2gen]), 2) * int(''.join([str(i) for i in co2scrub]), 2))
 
-def solve1(bingoBoards, pulled_nums):
-    winners = []
-    for num in pulled_nums:
-        for board in bingoBoards:
-            if board.new_number(num): winners.append(board.get_winning_sum() * num)
-        bingoBoards = list(filter(lambda board: board.is_loser(), bingoBoards))
-    print(winners[0], winners[-1])
-
-pulled_nums, *boards = open('input.txt').read().split('\n\n')
-pulled_nums = [int(i) for i in pulled_nums.split(',')]
-boards = [BingoBoard(board) for board in boards]
-solve1(boards, pulled_nums)
+input_array = [[int(c) for c in line] for line in [line.strip() for line in open('input.txt')]]
+solve1(input_array)
+solve2(input_array)
